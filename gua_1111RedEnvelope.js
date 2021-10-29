@@ -7,6 +7,8 @@ https://u.jd.com/3C7eCOr
 0,30 0,12,17 * * * gua_1111RedEnvelope.js
 */
 
+
+
 const $ = new Env('双十一无门槛红包🧧');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
