@@ -1,5 +1,30 @@
 var allShareCodes = [];
 var removedShareCodes = [];
+var chetou_number = process.env.CHETOU_NUMBER ? process.env.CHETOU_NUMBER : 0
+var fair_mode = process.env.FAIR_MODE ? process.env.FAIR_MODE : false
+
+exports.ModCK = function(cks) {
+    if (cks.length <= chetou_number || !fair_mode) {
+        return cks
+    }
+    var sck = []
+    var eck = []
+    for (var i = 0; i < cks.length; i++) {
+        if (i <= chetou_number - 1) {
+            sck.push(cks[i])
+        } else {
+            eck.push(cks[i])
+        }
+    }
+    eck.sort(function() {
+        return Math.random() - 0.5;
+    })
+    for (var i = 0; i < eck.length; i++) {
+        sck.push(eck[i])
+    }
+    return sck
+}
+
 
 exports.setDefaultShareCodes = function(str) {
     if (!str) {
