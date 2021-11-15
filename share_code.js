@@ -4,7 +4,7 @@ var chetou_number = process.env.CHETOU_NUMBER ? process.env.CHETOU_NUMBER : 0
 var fair_mode = process.env.FAIR_MODE ? true : false
 
 exports.ModCK = function(cks) {
-    console.log(`您${fair_mode ? "有":"没有"}设置公平模式。`)
+    console.log(`您${fair_mode ? "有" : "没有"}设置公平模式。`)
     console.log(`您设置了${chetou_number}个车头。`)
     if (cks.length <= chetou_number || !fair_mode) {
         return cks
@@ -21,6 +21,7 @@ exports.ModCK = function(cks) {
     eck.sort(function() {
         return Math.random() - 0.5;
     })
+    console.log(`已对${eck.length}个ck做了随机处理。`)
     for (var i = 0; i < eck.length; i++) {
         sck.push(eck[i])
     }
