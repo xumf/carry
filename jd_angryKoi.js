@@ -3,100 +3,101 @@
 更新时间：2021-7-11
 备注：高速并发请求，专治偷助力。在kois环境变量中填入需要助力的pt_pin，有多个请用@符号连接
 TG学习交流群：https://t.me/cdles
-5 0 * * * https://raw.githubusercontent.com/cdle/carry/main/jd_angryKoi.js
+5 0 * * * https://raw.githubusercontent.com/cdle/jd_study/main/jd_angryKoi.js
 */
 const $ = new Env("愤怒的锦鲤")
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const ua = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random()*4+10)}.${Math.ceil(Math.random()*4)};${randomString(40)}`
-var kois = process.env.kois ? process.env.kois : "";
-let cookiesArr = [];
+var kois = process.env.kois ?? ""
+let cookiesArr = []
 var helps = [];
-var tools = [];
-!(async() => {
-    if (!kois) {
+var tools= []
+!(async () => {
+    if(!kois){
         console.log("请在环境变量中填写需要助力的账号")
     }
     requireConfig()
     for (let i in cookiesArr) {
         cookie = cookiesArr[i]
-        if (kois.indexOf(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]) != -1) {
-            var num = "";
-            for (var g = 0; g < 6; g++) {
-                num += Math.floor(Math.random() * 10);
-            }
-            var data = await requestApi('h5launch', cookie, {
-                "followShop": 0,
-                "random": num,
-                "log": "42588613~8,~0iuxyee",
-                "sceneid": "JLHBhPageh5"
+        if(kois.indexOf(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])!=-1){
+                var num="";
+                for(var g=0;g<6;g++)
+                {
+                     num+=Math.floor(Math.random()*10);
+                }
+            var data = await requestApi('h5launch',cookie,{
+                 "followShop":0,
+                 "random": num,
+                 "log":"42588613~8,~0iuxyee",
+                 "sceneid":"JLHBhPageh5"
             });
-            switch (data ? .data ? .result ? .status) {
-                case 1: //火爆
+            switch (data?.data?.result?.status) {
+                case 1://火爆
                     continue;
-                case 2: //已经发起过
+                case 2://已经发起过
                     break;
                 default:
-                    if (data ? .data ? .result ? .redPacketId) {
-                        helps.push({ redPacketId: data.data.result.redPacketId, success: false, id: i, cookie: cookie })
+                    if(data?.data?.result?.redPacketId){
+                        helps.push({redPacketId: data.data.result.redPacketId, success: false, id: i, cookie: cookie})
                     }
                     continue;
-            }
-            data = await requestApi('h5activityIndex', cookie, {
-                "isjdapp": 1
+            }   
+            data = await requestApi('h5activityIndex',cookie,{
+                "isjdapp":1
             });
             console.log("发起请求")
-            switch (data ? .data ? .code) {
-                case 20002: //已达拆红包数量限制
+            switch (data?.data?.code) {
+                case 20002://已达拆红包数量限制
                     break;
-                case 10002: //活动正在进行，火爆号
+                case 10002://活动正在进行，火爆号
                     break;
-                case 20001: //红包活动正在进行，可拆
-                    helps.push({ redPacketId: data.data.result.redpacketInfo.id, success: false, id: i, cookie: cookie })
+                case 20001://红包活动正在进行，可拆
+                    helps.push({redPacketId: data.data.result.redpacketInfo.id, success: false, id: i, cookie: cookie})
                     break;
                 default:
                     break;
             }
         }
-        tools.push({ id: i, cookie: cookie })
+        tools.push({id: i, cookie: cookie})   
     }
-    for (let help of helps) {
+    for(let help of helps){
         open(help)
     }
     await $.wait(60000)
-})().catch((e) => {
-        $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
-    })
-    .finally(() => {
-        $.done();
-    })
+})()  .catch((e) => {
+    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+  })
+  .finally(() => {
+    $.done();
+  })
 
-function open(help) {
-    var num = "";
-    for (var i = 0; i < 6; i++) {
-        num += Math.floor(Math.random() * 10);
-    }
+function open(help){
+    var num="";
+    for(var i=0;i<6;i++)
+    {
+        num+=Math.floor(Math.random()*10);
+        }
     var tool = tools.pop()
-    if (!tool) return
-    if (help.success) return
+    if(!tool)return
+    if(help.success)return
     requestApi('jinli_h5assist', tool.cookie, {
         "redPacketId": help.redPacketId,
-        "followShop": 0,
+        "followShop":0,
         "random": num,
-        "log": "42588613~8,~0iuxyee",
-        "sceneid": "JLHBhPageh5"
-    }).then(function(data) {
-        desc = data ? .data ? .result ? .statusDesc
+        "log":"42588613~8,~0iuxyee",
+        "sceneid":"JLHBhPageh5"
+    }).then(function(data){
+        desc = data?.data?.result?.statusDesc
         if (desc && desc.indexOf("助力已满") != -1) {
             tools.unshift(tool)
-            help.success = true
+            help.success=true
         } else if (!data) {
             tools.unshift(tool)
         }
-        console.log(`${tool.id}->${help.id}`, desc)
-        open(help)
-    })
+        console.log(`${tool.id}->${help.id}`, desc)   
+        open(help)         
+    })   
 }
-
 function requestApi(functionId, cookie, body = {}) {
     return new Promise(resolve => {
         $.post({
